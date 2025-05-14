@@ -131,21 +131,27 @@ export function showMessage(message) {
 
 
 export function createXpGraph(data) {
+    console.log(data.length,"hhh");
     const container = document.createElement('div');
     container.classList.add('xp-graph-container');
 
     const svgNS = "http://www.w3.org/2000/svg";
-    const width = 1000;
-    const height = 600;
-    const margin = { top: 50, right: 50, bottom: 100, left: 100 };
+    const width = data.length*10;
+    const height = 400;
+    const margin = { top: 5, right: 5, bottom: 10, left: 10 };
 
     const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("width", width);
+    console.log(svg,"what this");
+    
+    svg.setAttribute("width",width);
     svg.setAttribute("height", height);
     svg.classList.add("xp-graph-svg");
 
+    // this for wheern user hover on rec a tooltip dic shown the information about the sx and date
     const tooltip = document.createElement("div");
     tooltip.classList.add("xp-tooltip");
+    console.log(tooltip,"tooltip");
+    
 
     // Process and sort data
     const processedData = data.map(d => ({
@@ -156,13 +162,13 @@ export function createXpGraph(data) {
     })).sort((a, b) => a.x - b.x);
 
     // Find min and max values for scaling
-    const xMin = processedData[0].x;
-    const xMax = processedData[processedData.length - 1].x;
-    const yMax = Math.max(...processedData.map(d => d.y));
+    const xMin = processedData[0].x; // this for calculatinng the first date in x axis
+    const xMax = processedData[processedData.length - 1].x; // this for calculating the max date in x axixs
+    const yMax = Math.max(...processedData.map(d => d.y));  // this for calculating the max xp in y axixs
 
     // Create scaling functions
     const scaleX = (x) => {
-        const range = xMax.getTime() - xMin.getTime();
+        const range = xMax.getTime() - xMin.getTime(); // this foe calculating the range for date the with of the x axis 
         return margin.left + ((x.getTime() - xMin.getTime()) / range) * (width - margin.left - margin.right);
     };
 
@@ -174,10 +180,12 @@ export function createXpGraph(data) {
     const xAxisLine = document.createElementNS(svgNS, "line");
     xAxisLine.setAttribute("x1", margin.left);
     xAxisLine.setAttribute("y1", height - margin.bottom);
-    xAxisLine.setAttribute("x2", width - margin.right);
+    xAxisLine.setAttribute("x2", 10*processedData.length ); //- margin.right
     xAxisLine.setAttribute("y2", height - margin.bottom);
     xAxisLine.setAttribute("stroke", "black");
+    xAxisLine.setAttribute("id","xline")
     svg.appendChild(xAxisLine);
+
 
     // Draw Y-axis
     const yAxisLine = document.createElementNS(svgNS, "line");
@@ -186,13 +194,20 @@ export function createXpGraph(data) {
     yAxisLine.setAttribute("x2", margin.left);
     yAxisLine.setAttribute("y2", height - margin.bottom);
     yAxisLine.setAttribute("stroke", "black");
+
     svg.appendChild(yAxisLine);
 
     // Create bars
-    const barWidth = 10;
+    //  console.log(xAxisLine.x1.baseVal.value);
+    //  console.log(svg.getElementById('xline').x2.animVal);
+     
+    
+    const barWidth = 10
+    console.log(barWidth,"width bar");
+    
     processedData.forEach(point => {
         const rect = document.createElementNS(svgNS, "rect");
-        rect.setAttribute("x", scaleX(point.x) - barWidth / 2);
+        rect.setAttribute("x", scaleX(point.x));
         rect.setAttribute("y", scaleY(point.y));
         rect.setAttribute("width", barWidth);
         rect.setAttribute("height", height - margin.bottom - scaleY(point.y));

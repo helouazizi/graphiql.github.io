@@ -1,38 +1,44 @@
+
+/* Radar Chart Styles */
 .skills-radar-chart-container {
-  width: 300px;
-  height: 300px;
-  margin: 0 auto;
+  background-color: var(--card-bg);
+  padding: 1.5rem 5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
 }
 
 .skills-radar-chart {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-width: 300px;
+  max-height: 300px;
 }
 
 .radar-grid-circle {
+  stroke: #ccc;
   fill: none;
-  stroke: rgb(170, 170, 170);
-  stroke-width: 0.75;
+  stroke-width: 1;
 }
 
 .radar-radial-line {
-  stroke: rgb(170, 170, 170);
-  stroke-width: 0.75;
+  stroke: #aaa;
+  stroke-width: 1;
 }
 
 .radar-grid-point {
-  fill: rgb(170, 170, 170);
-  r: 1;
+  fill: #999;
 }
 
 .radar-data-polygon {
-  fill: var(--purple);
-  stroke: none;
+  fill: var(--primary-color);
+  opacity: 0.5;
 }
 
 .radar-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  fill: rgb(91, 2, 255);
-  text-transform: capitalize;
+  font-size: 0.8rem;
+  fill: var(--text-color);
 }

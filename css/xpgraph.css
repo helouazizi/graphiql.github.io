@@ -1,14 +1,21 @@
 .xp-graph-container {
-    width: 100%;
+    background-color: var(--card-bg);
+    width: fit-content;
     max-width: 1000px;
     margin: 0 auto;
     position: relative;
+    padding: 1.5rem;
+    border-radius: 8px;
 }
 
 .xp-graph-svg {
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #79797900;
+    /* border-radius: 8px; */
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+    /* width: 100%;
+    height: auto;
+    max-width: 300px;
+    max-height: 300px; */
 }
 
 .xp-bar {
