@@ -1,0 +1,234 @@
+@import url("auth.css");
+/*
+@import url("header.css");
+@import url("sectiondata.css");
+@import url("xpgraph.CSS");
+@import url("radargraph.css");
+
+*{
+    margin: 0%;
+    padding: 0%;
+}
+.hidden{
+    display: none;
+}
+#shart {
+display: flex;
+  flex-wrap: wrap; 
+align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+
+} 
+/* styles.css 
+#message_popup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgb(121, 0, 0);  /* Warning color 
+  color: white;   Text color 
+  padding: 2 rem 3;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  max-width: 90%;
+  text-align: center;
+} */
+ :root {
+  --primary-color: #007BFF; /* Blue */
+  --bg-color: #a0a0a3;
+  --text-color: #000000;
+  --card-bg: #f8f9fa;
+  --border-radius: 10px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  line-height: 1.6;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--text-color);
+  color: var(--primary-color);
+  padding: 1rem 2rem;
+  box-shadow: var(--box-shadow);
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+.section-container {
+
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.user-info {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.user-info h2 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.user-info p {
+  margin: 0.4rem 0;
+}
+
+.audit-info,
+.level-info {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  box-shadow: var(--box-shadow);
+}
+
+.audit-info h3,
+.level-info h3 {
+  margin-bottom: 0.5rem;
+}
+
+/* Base Variables */
+
+/* Section container for graphs */
+#shart {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--bg-color);
+  border-radius: var(--border-radius);
+  font-family: var(--font-family);
+}
+
+/* XP Graph Styles */
+.xp-graph-container {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow-x: auto;
+  flex: 2 1 600px;
+  min-width: 300px;
+}
+
+.xp-graph-svg {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  width: 100%;
+  height: auto;
+}
+
+.xp-bar {
+  fill: var(--primary-color);
+}
+
+/* Radar Chart Styles */
+.skills-radar-chart-container {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: visible;
+  flex: 1 1 320px;
+  min-width: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skills-radar-chart {
+  width: 100%;
+  height: auto;
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.radar-grid-circle {
+  stroke: #ccc;
+  fill: none;
+  stroke-width: 1;
+}
+
+.radar-radial-line {
+  stroke: #aaa;
+  stroke-width: 1;
+}
+
+.radar-grid-point {
+  fill: #999;
+}
+
+.radar-data-polygon {
+  fill: var(--primary-color);
+  opacity: 0.5;
+}
+
+.radar-label {
+  font-size: 0.8rem;
+  fill: var(--text-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  #shart {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .xp-graph-container,
+  .skills-radar-chart-container {
+    min-width: 100%;
+  }
+}
