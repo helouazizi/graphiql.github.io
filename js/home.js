@@ -25,6 +25,16 @@ async function HomePage() {
   let skill = await createSkillsRadarChart(data.data.skil);
   shart.append(xpgrqph, skill);
   body.appendChild(shart);
+
+
+  // const footer = document.createElement("footer");
+  // footer.classList.add("footer");
+  // footer.innerHTML = `
+  //   <p>&copy; ${new Date().getFullYear()} Your Company. All rights reserved.</p>
+  // `;
+  // body.appendChild(footer)
+
+
 }
 
 export { HomePage };

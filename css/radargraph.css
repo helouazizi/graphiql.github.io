@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
+  min-width:300px;
 }
 
 .skills-radar-chart {

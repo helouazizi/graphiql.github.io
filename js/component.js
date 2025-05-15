@@ -129,117 +129,302 @@ export function showMessage(message) {
 }
 
 
-
-export function createXpGraph(data) {
-    console.log(data.length,"hhh");
+export function createXpGraph(data, projectName = "XP Progression") {
     const container = document.createElement('div');
     container.classList.add('xp-graph-container');
-
+  
+    const title = document.createElement('h3');
+    title.textContent = projectName;
+    container.appendChild(title);
+  
     const svgNS = "http://www.w3.org/2000/svg";
-    const width = data.length*10;
-    const height = 400;
-    const margin = { top: 5, right: 5, bottom: 10, left: 10 };
-
+  
+    // FIXED WIDTH & HEIGHT
+    const width = 700;  
+    const height = 300;
+    const margin = { top: 30, right: 30, bottom: 50, left: 50 };
+  
     const svg = document.createElementNS(svgNS, "svg");
-    console.log(svg,"what this");
-    
-    svg.setAttribute("width",width);
+    svg.setAttribute("width", width);
     svg.setAttribute("height", height);
     svg.classList.add("xp-graph-svg");
-
-    // this for wheern user hover on rec a tooltip dic shown the information about the sx and date
+    container.appendChild(svg);
+  
     const tooltip = document.createElement("div");
     tooltip.classList.add("xp-tooltip");
-    console.log(tooltip,"tooltip");
-    
-
-    // Process and sort data
-    const processedData = data.map(d => ({
-        x: new Date(d.createdAt),
-        y: d.amount,
-        path : d.progress.path,
+    tooltip.style.position = "fixed";
+    tooltip.style.pointerEvents = "none";
+    tooltip.style.visibility = "hidden";
+    tooltip.style.background = "#222";
+    tooltip.style.color = "white";
+    tooltip.style.padding = "6px 10px";
+    tooltip.style.borderRadius = "4px";
+    tooltip.style.fontSize = "12px";
+    tooltip.style.zIndex = 9999;
+    document.body.appendChild(tooltip);
+  
+    const processedData = data
+      .map(d => ({
+        x: new Date(d.date || d.createdAt),
+        y: d.xp || d.amount,
+        path: d.path || (d.progress && d.progress.path) || "",
         original: d
-    })).sort((a, b) => a.x - b.x);
-
-    // Find min and max values for scaling
-    const xMin = processedData[0].x; // this for calculatinng the first date in x axis
-    const xMax = processedData[processedData.length - 1].x; // this for calculating the max date in x axixs
-    const yMax = Math.max(...processedData.map(d => d.y));  // this for calculating the max xp in y axixs
-
-    // Create scaling functions
-    const scaleX = (x) => {
-        const range = xMax.getTime() - xMin.getTime(); // this foe calculating the range for date the with of the x axis 
-        return margin.left + ((x.getTime() - xMin.getTime()) / range) * (width - margin.left - margin.right);
-    };
-
+      }))
+      .sort((a, b) => a.x - b.x);
+  
+    if (processedData.length === 0) {
+      container.appendChild(document.createTextNode("No data to display"));
+      return container;
+    }
+  
+    const xMin = processedData[0].x;
+    const xMax = processedData[processedData.length - 1].x;
+    const yMax = Math.max(...processedData.map(d => d.y));
+  
+    // SCALE Y as before
     const scaleY = (y) => {
-        return height - margin.bottom - (y / yMax) * (height - margin.top - margin.bottom);
+      return height - margin.bottom - (y / yMax) * (height - margin.top - margin.bottom);
     };
-
-    // Draw X-axis
-    const xAxisLine = document.createElementNS(svgNS, "line");
-    xAxisLine.setAttribute("x1", margin.left);
-    xAxisLine.setAttribute("y1", height - margin.bottom);
-    xAxisLine.setAttribute("x2", 10*processedData.length ); //- margin.right
-    xAxisLine.setAttribute("y2", height - margin.bottom);
-    xAxisLine.setAttribute("stroke", "black");
-    xAxisLine.setAttribute("id","xline")
-    svg.appendChild(xAxisLine);
-
-
-    // Draw Y-axis
-    const yAxisLine = document.createElementNS(svgNS, "line");
-    yAxisLine.setAttribute("x1", margin.left);
-    yAxisLine.setAttribute("y1", margin.top);
-    yAxisLine.setAttribute("x2", margin.left);
-    yAxisLine.setAttribute("y2", height - margin.bottom);
-    yAxisLine.setAttribute("stroke", "black");
-
-    svg.appendChild(yAxisLine);
-
-    // Create bars
-    //  console.log(xAxisLine.x1.baseVal.value);
-    //  console.log(svg.getElementById('xline').x2.animVal);
-     
-    
-    const barWidth = 10
-    console.log(barWidth,"width bar");
-    
-    processedData.forEach(point => {
-        const rect = document.createElementNS(svgNS, "rect");
-        rect.setAttribute("x", scaleX(point.x));
-        rect.setAttribute("y", scaleY(point.y));
-        rect.setAttribute("width", barWidth);
-        rect.setAttribute("height", height - margin.bottom - scaleY(point.y));
-        rect.classList.add("xp-bar");
-
-        rect.addEventListener("mouseenter", (e) => {
-            tooltip.innerHTML = `
-                <div class="tooltip-content">
-                    <strong>Date:</strong> ${point.x.toLocaleDateString()}<br>
-                    <strong>XP:</strong> ${point.y}<br>
-                    <strong>Path</strong><br>
-                    <pre>${point.path}</pre>
-                </div>
-            `;
-            tooltip.style.left = `${e.pageX + 10}px`;
-            tooltip.style.top = `${e.pageY + 10}px`;
-            tooltip.classList.add("visible");
-            document.body.appendChild(tooltip);
-        });
-
-        rect.addEventListener("mouseleave", () => {
-            if (tooltip.parentElement) {
-                document.body.removeChild(tooltip);
-            }
-        });
-
-        svg.appendChild(rect);
+  
+    // SCALE X: spread points evenly horizontally across width (ignores date differences)
+    const scaleX = (i) => {
+      const usableWidth = width - margin.left - margin.right;
+      const n = processedData.length - 1;
+      if (n === 0) return margin.left + usableWidth / 2;
+      return margin.left + (i / n) * usableWidth;
+    };
+  
+    // Axes
+    const xAxis = document.createElementNS(svgNS, "line");
+    xAxis.setAttribute("x1", margin.left);
+    xAxis.setAttribute("y1", height - margin.bottom);
+    xAxis.setAttribute("x2", width - margin.right);
+    xAxis.setAttribute("y2", height - margin.bottom);
+    xAxis.setAttribute("stroke", "#333");
+    svg.appendChild(xAxis);
+  
+    const yAxis = document.createElementNS(svgNS, "line");
+    yAxis.setAttribute("x1", margin.left);
+    yAxis.setAttribute("y1", margin.top);
+    yAxis.setAttribute("x2", margin.left);
+    yAxis.setAttribute("y2", height - margin.bottom);
+    yAxis.setAttribute("stroke", "#333");
+    svg.appendChild(yAxis);
+  
+    for (let i = 0; i <= 5; i++) {
+      const yVal = (yMax / 5) * i;
+      const yPos = scaleY(yVal);
+  
+      const gridLine = document.createElementNS(svgNS, "line");
+      gridLine.setAttribute("x1", margin.left);
+      gridLine.setAttribute("y1", yPos);
+      gridLine.setAttribute("x2", width - margin.right);
+      gridLine.setAttribute("y2", yPos);
+      gridLine.setAttribute("stroke", "#ddd");
+      gridLine.setAttribute("stroke-dasharray", "4 2");
+      svg.appendChild(gridLine);
+  
+      const label = document.createElementNS(svgNS, "text");
+      label.setAttribute("x", margin.left - 10);
+      label.setAttribute("y", yPos + 4);
+      label.setAttribute("text-anchor", "end");
+      label.setAttribute("font-size", "12");
+      label.setAttribute("fill", "#666");
+      label.textContent = Math.round(yVal);
+      svg.appendChild(label);
+    }
+  
+    // X axis labels: evenly spaced indexes with dates
+    const labelStep = Math.ceil(processedData.length / 6);
+    for (let i = 0; i < processedData.length; i += labelStep) {
+      const xPos = scaleX(i);
+      const label = document.createElementNS(svgNS, "text");
+      label.setAttribute("x", xPos);
+      label.setAttribute("y", height - margin.bottom + 20);
+      label.setAttribute("text-anchor", "middle");
+      label.setAttribute("font-size", "12");
+      label.setAttribute("fill", "#666");
+      label.textContent = processedData[i].x.toLocaleDateString();
+      svg.appendChild(label);
+    }
+  
+    // Create polyline points string based on index for X
+    const points = processedData
+      .map((p, i) => `${scaleX(i)},${scaleY(p.y)}`)
+      .join(" ");
+  
+    const polyline = document.createElementNS(svgNS, "polyline");
+    polyline.setAttribute("points", points);
+    polyline.setAttribute("fill", "none");
+    polyline.setAttribute("stroke", "#4a90e2");
+    polyline.setAttribute("stroke-width", "3");
+    svg.appendChild(polyline);
+  
+    // Circles + tooltip
+    processedData.forEach((point, i) => {
+      const cx = scaleX(i);
+      const cy = scaleY(point.y);
+  
+      const circle = document.createElementNS(svgNS, "circle");
+      circle.setAttribute("cx", cx);
+      circle.setAttribute("cy", cy);
+      circle.setAttribute("r", 6);
+      circle.setAttribute("fill", "#4a90e2");
+      circle.style.cursor = "pointer";
+  
+      circle.addEventListener("mouseenter", (e) => {
+        tooltip.innerHTML = `
+          <div>
+            <strong>Date:</strong> ${point.x.toLocaleDateString()}<br>
+            <strong>XP:</strong> ${point.y} B<br>
+            <strong>Path:</strong><br><pre>${point.path}</pre>
+          </div>
+        `;
+        tooltip.style.visibility = "visible";
+        tooltip.style.opacity = "1";
+      
+        const offset = 10;
+        let left = e.clientX + offset;
+        let top = e.clientY + offset;
+        if (left + tooltip.offsetWidth > window.innerWidth) {
+          left = e.clientX - tooltip.offsetWidth - offset;
+        }
+        if (top + tooltip.offsetHeight > window.innerHeight) {
+          top = e.clientY - tooltip.offsetHeight - offset;
+        }
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
+      });
+      
+      circle.addEventListener("mouseleave", () => {
+        tooltip.style.visibility = "hidden";
+        tooltip.style.opacity = "0";
+      });
+      
+  
+      svg.appendChild(circle);
     });
-
-    container.appendChild(svg);
+  
+    container.cleanup = () => {
+      if (tooltip.parentNode) {
+        tooltip.parentNode.removeChild(tooltip);
+      }
+    };
+  
     return container;
 }
+  
+  
+
+// export function createXpGraph(data) {
+//     console.log(data,"data");
+    
+//     const container = document.createElement('div');
+//     container.classList.add('xp-graph-container');
+
+//     const svgNS = "http://www.w3.org/2000/svg";
+//     const width = data.length*10;
+//     const height = 400;
+//     const margin = { top: 5, right: 5, bottom: 10, left: 10 };
+
+//     const svg = document.createElementNS(svgNS, "svg");
+//     console.log(svg,"what this");
+    
+//     svg.setAttribute("width",width);
+//     svg.setAttribute("height", height);
+//     svg.classList.add("xp-graph-svg");
+
+//     // this for wheern user hover on rec a tooltip dic shown the information about the sx and date
+//     const tooltip = document.createElement("div");
+//     tooltip.classList.add("xp-tooltip");
+    
+
+//     // Process and sort data
+//     const processedData = data.map(d => ({
+//         x: new Date(d.createdAt),
+//         y: d.amount,
+//         path : d.progress.path,
+//         original: d
+//     })).sort((a, b) => a.x - b.x);
+
+//     // Find min and max values for scaling
+//     const xMin = processedData[0].x; // this for calculatinng the first date in x axis
+//     const xMax = processedData[processedData.length - 1].x; // this for calculating the max date in x axixs
+//     const yMax = Math.max(...processedData.map(d => d.y));  // this for calculating the max xp in y axixs
+
+//     // Create scaling functions
+//     const scaleX = (x) => {
+//         const range = xMax.getTime() - xMin.getTime(); // this foe calculating the range for date the with of the x axis 
+//         return margin.left + ((x.getTime() - xMin.getTime()) / range) * (width - margin.left - margin.right);
+//     };
+
+//     const scaleY = (y) => {
+//         return height - margin.bottom - (y / yMax) * (height - margin.top - margin.bottom);
+//     };
+
+//     // Draw X-axis
+//     const xAxisLine = document.createElementNS(svgNS, "line");
+//     xAxisLine.setAttribute("x1", margin.left);
+//     xAxisLine.setAttribute("y1", height - margin.bottom);
+//     xAxisLine.setAttribute("x2", 10*processedData.length ); //- margin.right
+//     xAxisLine.setAttribute("y2", height - margin.bottom);
+//     xAxisLine.setAttribute("stroke", "black");
+//     xAxisLine.setAttribute("id","xline")
+//     svg.appendChild(xAxisLine);
+
+
+//     // Draw Y-axis
+//     const yAxisLine = document.createElementNS(svgNS, "line");
+//     yAxisLine.setAttribute("x1", margin.left);
+//     yAxisLine.setAttribute("y1", margin.top);
+//     yAxisLine.setAttribute("x2", margin.left);
+//     yAxisLine.setAttribute("y2", height - margin.bottom);
+//     yAxisLine.setAttribute("stroke", "black");
+
+//     svg.appendChild(yAxisLine);
+
+//     // Create bars
+//     //  console.log(xAxisLine.x1.baseVal.value);
+//     //  console.log(svg.getElementById('xline').x2.animVal);
+     
+    
+//     const barWidth = 10
+        
+//     processedData.forEach(point => {
+//         const rect = document.createElementNS(svgNS, "rect");
+//         rect.setAttribute("x", scaleX(point.x)+2); ////////////////////////////////////////////////////
+//         rect.setAttribute("y", scaleY(point.y));
+//         rect.setAttribute("width", barWidth);
+//         rect.setAttribute("height", height - margin.bottom - scaleY(point.y));
+//         rect.classList.add("xp-bar");
+
+//         rect.addEventListener("mouseenter", (e) => {
+//             tooltip.innerHTML = `
+//                 <div class="tooltip-content">
+//                     <strong>Date:</strong> ${point.x.toLocaleDateString()}<br>
+//                     <strong>XP:</strong> ${point.y}<br>
+//                     <strong>Path</strong><br>
+//                     <pre>${point.path}</pre>
+//                 </div>
+//             `;
+//             tooltip.style.left = `${e.pageX}px`;
+//             tooltip.style.top = `${e.pageY}px`;
+//             tooltip.classList.add("visible");
+//             document.body.appendChild(tooltip);
+//         });
+
+//         rect.addEventListener("mouseleave", () => {
+//             if (tooltip.parentElement) {
+//                 document.body.removeChild(tooltip);
+//             }
+//         });
+
+//         svg.appendChild(rect);
+//     });
+
+//     container.appendChild(svg);
+//     return container;
+// }
 export function createSkillsRadarChart(skillsData) {
     // Aggregate skills by type, taking the max amount
     const skillMax = skillsData.reduce((acc, skill) => {

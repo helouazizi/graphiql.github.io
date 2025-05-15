@@ -6,8 +6,8 @@
 
 
 :root {
-  --primary-color: #007bff; /* Blue */
-  --bg-color: #a0a0a3;
+  --primary-color: #007bff; 
+  --bg-color: #3c3c3c;
   --text-color: #000000;
   --card-bg: #f8f9fa;
   --border-radius: 10px;
@@ -30,24 +30,24 @@ body {
 
 /* Section container for graphs */
 #shart {
-  display: flex; /* use flex instead of grid */
-  flex-direction: row; /* use column if you want them stacked */
-  justify-content: flex-start;
-  gap: 20px; /* optional: spacing between SVGs */
-  background-color: rgb(35, 30, 30);
+  display: flex;
+  flex-direction: row; 
+  justify-content: center;
+  gap: 20px; 
+ 
   padding: 10px;
-  overflow-x: auto; /* good for horizontal scrolling if graphs overflow */
+  overflow-x: auto; 
 }
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
-  /* #shart {
+  #shart {
     flex-direction: column;
     align-items: stretch;
-  } */
-
-  /* .xp-graph-container,
-  .skills-radar-chart-container {
-    min-width: 100%;
-  } */
+  }
 }
+
+
+
+
+
