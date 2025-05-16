@@ -129,12 +129,12 @@ export function showMessage(message) {
 }
 
 
-export function createXpGraph(data, projectName = "XP Progression") {
+export function createXpGraph(data) {
     const container = document.createElement('div');
     container.classList.add('xp-graph-container');
   
     const title = document.createElement('h3');
-    title.textContent = projectName;
+    title.textContent = `XP Progression`;
     container.appendChild(title);
   
     const svgNS = "http://www.w3.org/2000/svg";
@@ -177,8 +177,8 @@ export function createXpGraph(data, projectName = "XP Progression") {
       return container;
     }
   
-    const xMin = processedData[0].x;
-    const xMax = processedData[processedData.length - 1].x;
+    // const xMin = processedData[0].x;
+    // const xMax = processedData[processedData.length - 1].x;
     const yMax = Math.max(...processedData.map(d => d.y));
   
     // SCALE Y as before
@@ -432,6 +432,8 @@ export function createSkillsRadarChart(skillsData) {
         acc[cleanType] = Math.max(acc[cleanType] || 0, skill.amount);
         return acc;
     }, {});
+    console.log(skillMax,"max");
+    
 
     // Create container and SVG
     const container = document.createElement('div');
