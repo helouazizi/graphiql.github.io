@@ -1,6 +1,6 @@
 export async function fetchdata() {
-  
-    const query = `
+
+  const query = `
   {
     user {
       firstName
@@ -63,11 +63,15 @@ export async function fetchdata() {
       },
       body: JSON.stringify({ query })
     });
+    // if (!response.ok){
+    //   throw new Error("");
+      
+    // }
 
     const data = await response.json();
-  return data
+    return data
 
   } catch (error) {
- return
+    return
   }
 }

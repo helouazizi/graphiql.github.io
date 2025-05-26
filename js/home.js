@@ -11,7 +11,6 @@ async function HomePage() {
   const head = Header();
   body.appendChild(head);
   let data = await fetchdata();
-  console.log(data);
   let secdata = {};
   (secdata.user = data.data.user[0]),
     (secdata.level = data.data.levels.aggregate.max.amount);
@@ -27,14 +26,12 @@ async function HomePage() {
   body.appendChild(shart);
 
 
-  // const footer = document.createElement("footer");
-  // footer.classList.add("footer");
-  // footer.innerHTML = `
-  //   <p>&copy; ${new Date().getFullYear()} Your Company. All rights reserved.</p>
-  // `;
-  // body.appendChild(footer)
-
-
+  const footer = document.createElement("footer");
+  footer.classList.add("footer");
+  footer.innerHTML = `
+    <p>&copy; ${new Date().getFullYear()} z01. All rights reserved.</p>
+  `;
+  body.appendChild(footer)
 }
 
 export { HomePage };

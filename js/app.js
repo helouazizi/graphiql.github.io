@@ -7,9 +7,10 @@ async function main() {
     } else {
        await HomePage();
        logOut()
-      
     }
 }
 
-main()
+document.addEventListener('DOMContentLoaded',()=>{
+    main();
+})
 

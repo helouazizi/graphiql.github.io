@@ -4,6 +4,8 @@
 @import url("sectiondata.css");
 @import url("header.css");
 
+@import url("footer.css");
+
 
 :root {
   --primary-color: #007bff; 
@@ -38,6 +40,35 @@ body {
   padding: 10px;
   overflow-x: auto; 
 }
+
+
+
+
+#message_popup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #b13535;
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  font-size: 16px;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; top: 0px; }
+  to { opacity: 1; top: 20px; }
+}
+
+@keyframes fadeout {
+  from { opacity: 1; top: 20px; }
+  to { opacity: 0; top: 0px; }
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 900px) {

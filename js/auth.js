@@ -31,8 +31,7 @@ document.body.append(login)
     });
 
     if (!res.ok) {
-      showMessage("Invalid  Credential ")
-     
+      showMessage("Invalid  Credentials ")
       return;
     }
 
