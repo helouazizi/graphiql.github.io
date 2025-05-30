@@ -50,13 +50,13 @@
   box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
 }
 
-/* .audit-info h3,
+.audit-info h3,
 .level-info h3 {
   color: var(--primary-color);
   margin-bottom: 0.8rem;
   font-weight: 600;
   font-size: 1.2rem;
-} */
+}
 
 .audit-info p,
 .level-info p {
