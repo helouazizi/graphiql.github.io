@@ -1,7 +1,7 @@
 # 📊 GraphQL 
 
 A dynamic user profile page built with data from a GraphQL API. This project fetches personalized school data (Z01 sckool) via GraphQL queries and displays it in a responsive UI — including interactive SVG-based graphs to visualize learning progress, achievements, and activity.
-you can visite it here: `https://helouazizi.github.io/graphiql.github.io/`
+you can visite it here: [Live Demo](`https://helouazizi.github.io/graphiql.github.io/`)
 
 ## 🚀 Objectives
 
