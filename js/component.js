@@ -333,109 +333,106 @@ export function createXpGraph(data) {
 
 
 export function createSkillsRadarChart(skillsData) {
-  // Aggregate skills by type, taking the max amount
-  const skillMax = skillsData.reduce((acc, skill) => {
-    const cleanType = skill.type.replace('skill_', '');
-    acc[cleanType] = Math.max(acc[cleanType] || 0, skill.amount);
-    return acc;
-  }, {});
+    // Aggregate skills by type, taking the max amount
+    const skillMax = skillsData.reduce((acc, skill) => {
+        const cleanType = skill.type.replace('kill_', '');
+        acc[cleanType] = Math.max(acc[cleanType] || 0, skill.amount);
+        return acc;
+    }, {});
 
+    const container = document.createElement('div');
+    container.classList.add('skills-radar-chart-container');
+    let header = document.createElement("h3")
+    header.textContent = 'Skills'
 
-  const container = document.createElement('div');
-  container.classList.add('skills-radar-chart-container');
+    const svgNS = "http://www.w3.org/2000/svg";
+    const viewBoxSize = 300;
+    const center = viewBoxSize / 2;
+    const maxRadius = 130;
 
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`);
+    svg.classList.add("skills-radar-chart");
+    svg.style.overflow = "visible";
 
-  const svgNS = "http://www.w3.org/2000/svg";
-  const viewBoxSize = 300;
-  const center = viewBoxSize / 2;
-  const maxRadius = 130;
+    // Prepare data
+    const skills = Object.keys(skillMax);
+    const maxValue = 100; // <-- Fixed max value
+    const angleStep = (2 * Math.PI) / skills.length;
 
-  const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`);
-  svg.classList.add("skills-radar-chart");
-  svg.style.overflow = "visible";
-
-  // Prepare data
-  const skills = Object.keys(skillMax);
-  const maxValue = Math.max(...Object.values(skillMax));
-  const angleStep = (2 * Math.PI) / skills.length;
-
-  // Draw background grid circles
-  const gridLevels = 9;
-  for (let level = 1; level <= gridLevels; level++) {
-    const circle = document.createElementNS(svgNS, "circle");
-    circle.setAttribute("cx", center);
-    circle.setAttribute("cy", center);
-    circle.setAttribute("r", (maxRadius * level) / gridLevels);
-    circle.classList.add('radar-grid-circle');
-    svg.appendChild(circle);
-  }
-
-  // Draw radial elements
-  skills.forEach((_, i) => {
-    const angle = i * angleStep;
-    const endX = center + maxRadius * Math.cos(angle);
-    const endY = center + maxRadius * Math.sin(angle);
-
-    // Radial line
-    const line = document.createElementNS(svgNS, "line");
-    line.setAttribute("x1", center);
-    line.setAttribute("y1", center);
-    line.setAttribute("x2", endX);
-    line.setAttribute("y2", endY);
-    line.classList.add('radar-radial-line');
-    svg.appendChild(line);
-
-    // Grid points
+    // Draw background grid circles
+    const gridLevels = 9;
     for (let level = 1; level <= gridLevels; level++) {
-      const radius = (maxRadius * level) / gridLevels;
-      const point = document.createElementNS(svgNS, "circle");
-      point.setAttribute("cx", center + radius * Math.cos(angle));
-      point.setAttribute("cy", center + radius * Math.sin(angle));
-      point.classList.add('radar-grid-point');
-      svg.appendChild(point);
+        const circle = document.createElementNS(svgNS, "circle");
+        circle.setAttribute("cx", center);
+        circle.setAttribute("cy", center);
+        circle.setAttribute("r", (maxRadius * level) / gridLevels);
+        circle.classList.add('radar-grid-circle');
+        svg.appendChild(circle);
     }
-  });
 
-  // Calculate data points
-  const dataPoints = skills.map((skill, i) => {
-    const value = skillMax[skill];
-    const scaledValue = (value / maxValue) * maxRadius;
-    const angle = i * angleStep;
-    return {
-      x: center + scaledValue * Math.cos(angle),
-      y: center + scaledValue * Math.sin(angle),
-      skill
-    };
-  });
+    // Draw radial lines and grid points
+    skills.forEach((_, i) => {
+        const angle = i * angleStep;
+        const endX = center + maxRadius * Math.cos(angle);
+        const endY = center + maxRadius * Math.sin(angle);
 
-  // Draw data polygon
-  const polygon = document.createElementNS(svgNS, "polygon");
-  polygon.setAttribute("points", dataPoints.map(p => `${p.x},${p.y}`).join(' '));
-  polygon.classList.add('radar-data-polygon');
-  svg.appendChild(polygon);
+        const line = document.createElementNS(svgNS, "line");
+        line.setAttribute("x1", center);
+        line.setAttribute("y1", center);
+        line.setAttribute("x2", endX);
+        line.setAttribute("y2", endY);
+        line.classList.add('radar-radial-line');
+        svg.appendChild(line);
 
-  // Add labels
-  dataPoints.forEach((point, i) => {
-    const angle = i * angleStep;
-    const labelRadius = maxRadius + 30;
-    const label = document.createElementNS(svgNS, "text");
+        for (let level = 1; level <= gridLevels; level++) {
+            const radius = (maxRadius * level) / gridLevels;
+            const point = document.createElementNS(svgNS, "circle");
+            point.setAttribute("cx", center + radius * Math.cos(angle));
+            point.setAttribute("cy", center + radius * Math.sin(angle));
+            point.classList.add('radar-grid-point');
+            svg.appendChild(point);
+        }
+    });
 
-    label.setAttribute("x", center + labelRadius * Math.cos(angle));
-    label.setAttribute("y", center + labelRadius * Math.sin(angle));
-    label.textContent = point.skill;
-    label.classList.add('radar-label');
+    // Calculate data points using fixed 100 scale
+    const dataPoints = skills.map((skill, i) => {
+        const value = skillMax[skill];
+        const scaledValue = (value / maxValue) * maxRadius;
+        const angle = i * angleStep;
+        return {
+            x: center + scaledValue * Math.cos(angle),
+            y: center + scaledValue * Math.sin(angle),
+            skill
+        };
+    });
 
-    // Text anchoring
-    const textAnchor = angle <= Math.PI / 2 || angle > 3 * Math.PI / 2 ? "start" : "end";
-    const baseline = angle < Math.PI ? "after-edge" : "before-edge";
-    label.setAttribute("text-anchor", textAnchor);
-    label.setAttribute("alignment-baseline", baseline);
+    // Draw the data polygon
+    const polygon = document.createElementNS(svgNS, "polygon");
+    polygon.setAttribute("points", dataPoints.map(p => `${p.x},${p.y}`).join(' '));
+    polygon.classList.add('radar-data-polygon');
+    svg.appendChild(polygon);
 
-    svg.appendChild(label);
-  });
+    // Add skill labels
+    dataPoints.forEach((point, i) => {
+        const angle = i * angleStep;
+        const labelRadius = maxRadius + 30;
+        const label = document.createElementNS(svgNS, "text");
 
-  container.appendChild(svg);
-  return container;
+        label.setAttribute("x", center + labelRadius * Math.cos(angle));
+        label.setAttribute("y", center + labelRadius * Math.sin(angle));
+        label.textContent = point.skill;
+        label.classList.add('radar-label');
+
+        const textAnchor = angle <= Math.PI / 2 || angle > 3 * Math.PI / 2 ? "start" : "end";
+        const baseline = angle < Math.PI ? "after-edge" : "before-edge";
+        label.setAttribute("text-anchor", textAnchor);
+        label.setAttribute("alignment-baseline", baseline);
+
+        svg.appendChild(label);
+    });
+    container.appendChild(header)
+    container.appendChild(svg);
+    return container;
 }
 

@@ -1,5 +1,5 @@
-
 .skills-radar-chart-container {
+  position: relative; /* Needed for absolute positioning inside */
   background-color: var(--card-bg);
   padding: 1.5rem 5rem;
   border-radius: var(--border-radius);
@@ -8,10 +8,21 @@
   justify-content: center;
   flex-direction: column;
   max-width: 850px;
-  min-width:300px;
+  min-width: 300px;
   margin: 5rem auto;
 }
 
+.skills-radar-chart-container h3 {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  margin: 0;
+  font-size: 1.17rem;
+  color: var(--text-color);
+  z-index: 2;
+  font-weight: bold;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
 .skills-radar-chart {
   width: 100%;
   height: auto;
