@@ -130,7 +130,7 @@ export function sectiondata(data = {}) {
   let xpTitle = document.createElement("h3");
   xpTitle.textContent = "Totale xp ";
   let xpValue = document.createElement("p");
-  xpValue.textContent = Math.floor(data.xp / 1000) + "KB";
+  xpValue.textContent = Math.round(data.xp / 1000) + "KB";
 
   xpdiv.append(xpTitle, xpValue);
 
