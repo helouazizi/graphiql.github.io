@@ -9,7 +9,7 @@ you can visite it here: `https://helouazizi.github.io/graphiql.github.io/`
 - Authenticate users to access personal data.
 - Query the GraphQL API endpoint to retrieve user-specific data.
 - Create a user profile interface with:
-  - **At least three chosen data points** (e.g., XP, grades, skills, audits).
+  - **At least three chosen data points** (e.g., XP, skills, audits).
   - **A statistics section** with **at least two SVG graphs**.
 
 ## 🌐 GraphQL API
@@ -24,12 +24,10 @@ you can visite it here: `https://helouazizi.github.io/graphiql.github.io/`
   - Basic user info
   - XP earned
   - Audit ratios
-  - Grades, projects, and more
-- **Statistics Section**: Includes **two or more SVG graphs**:
+  - projects, and more
+- **Statistics Section**: Includes **two  SVG graphs**:
   - XP over time
-  - Projects pass/fail ratio
-  - Audit pass rates
-  - Attempts per exercise
+  - Skills
 - **Fully responsive UI** with clean design and accessibility in mind.
 
 ## 🖼️ Technologies Used
