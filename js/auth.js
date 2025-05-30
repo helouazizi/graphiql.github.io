@@ -11,12 +11,9 @@ document.body.append(login)
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log(e);
 
     const email = document.getElementById("userinput").value
     const password = document.getElementById("passwordinput").value
-    console.log(email, password, "values");
-
 
     const credentials = btoa(`${email}:${password}`);
 
