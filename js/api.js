@@ -2,75 +2,60 @@ export async function fetchdata() {
 
   const userQuery = `
   user {
-    firstName
-    lastName
-    auditRatio
-    campus
-    attrs
-  }
+      firstName
+      lastName
+      auditRatio
+      campus
+      attrs
+    }
 `;
 
   const xpQuery = `
-  xp: transaction(
-    where: {
-      type: { _eq: "xp" },
-      progress: {
-        path: { _regex: "^/oujda/module/(piscine-js$|(?!piscine-js/).*)$" }
-      }
-    }
-  ) {
-    amount
-    type
+  xp :transaction ( where : {
+    type : { _eq : "xp"},
+    eventId: { _eq: 41 }
+  } )  {
+  amount 
+    type  
     createdAt
-    progress {
+    progress{
       path
+      
     }
   }
 `;
 
   const totalXpQuery = `
-  totalxpamount: transaction_aggregate(
-    where: {
+ totalxpamount: transaction_aggregate(where: {
       type: { _eq: "xp" },
-      progress: {
-        path: { _regex: "^/oujda/module/(piscine-js$|(?!piscine-js/).*)$" }
+       eventId: { _eq: 41 }
+    }) {
+      aggregate {
+        sum {
+          amount
+        }
       }
     }
-  ) {
-    aggregate {
-      sum {
-        amount
-      }
-    }
-  }
 `;
 
   const levelQuery = `
-  levels: transaction_aggregate(
-    where: {
+  levels: transaction_aggregate(where: {
       type: { _eq: "level" },
-      progress: {
-        path: { _regex: "^/oujda/module/(piscine-js$|(?!piscine-js/).*)$" }
+         eventId: { _eq: 41 }
+    }) {
+      aggregate {
+        max {
+          amount
+        }
       }
     }
-  ) {
-    aggregate {
-      max {
-        amount
-      }
-    }
-  }
 `;
 
   const skillQuery = `
-  skil: transaction(
-    where: {
-      type: { _regex: "skill" }
+    skil: transaction(where: { type: { _regex: "skill" } }) {
+      amount
+      type
     }
-  ) {
-    amount
-    type
-  }
 `;
   const query = `
 {
@@ -100,3 +85,52 @@ export async function fetchdata() {
     return
   }
 }
+
+
+
+// const query = `
+//  {
+//     user {
+//       firstName
+//       lastName
+//       auditRatio
+//       campus
+//       attrs
+//     }
+//     xp :transaction ( where : {
+//     type : { _eq : "xp"},
+//     eventId: { _eq: 41 }
+//   } )  {
+//   amount 
+//     type  
+//     createdAt
+//     progress{
+//       path
+      
+//     }
+//   }
+//     totalxpamount: transaction_aggregate(where: {
+//       type: { _eq: "xp" },
+//        eventId: { _eq: 41 }
+//     }) {
+//       aggregate {
+//         sum {
+//           amount
+//         }
+//       }
+//     }
+//     levels: transaction_aggregate(where: {
+//       type: { _eq: "level" },
+//          eventId: { _eq: 41 }
+//     }) {
+//       aggregate {
+//         max {
+//           amount
+//         }
+//       }
+//     }
+//     skil: transaction(where: { type: { _regex: "skill" } }) {
+//       amount
+//       type
+//     }
+//   }`

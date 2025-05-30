@@ -3,6 +3,7 @@ import {
   sectiondata,
   createXpGraph,
   createSkillsRadarChart,
+  Footer
 } from "./component.js";
 import { fetchdata } from "./api.js";
 
@@ -30,23 +31,14 @@ async function HomePage() {
   });
   body.appendChild(section);
 
-  // --- Graphs Section ---
-  const chartSection = document.createElement("section");
-  chartSection.id = "chart-section";
+  const xp_section = await createXpGraph(xpData);
+  const skills_section = await createSkillsRadarChart(skillData);
+  body.append(xp_section, skills_section);
 
-  const xpGraph = await createXpGraph(xpData);
-  const skillsRadar = await createSkillsRadarChart(skillData);
-  chartSection.append(xpGraph, skillsRadar);
+  const footer = Footer()
+  body.append(footer)
 
-  body.appendChild(chartSection);
-
-  // --- Footer ---
-  const footer = document.createElement("footer");
-  footer.classList.add("footer");
-  footer.innerHTML = `
-    <p>&copy; ${new Date().getFullYear()} z01. All rights reserved.</p>
-  `;
-  body.appendChild(footer);
+  
 }
 
 export { HomePage };

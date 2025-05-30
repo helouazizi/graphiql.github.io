@@ -1,0 +1,45 @@
+
+.skills-radar-chart-container {
+  background-color: var(--card-bg);
+  padding: 1.5rem 5rem;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  max-width: 850px;
+  min-width:300px;
+  margin: 5rem auto;
+}
+
+.skills-radar-chart {
+  width: 100%;
+  height: auto;
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.radar-grid-circle {
+  stroke: #ccc;
+  fill: none;
+  stroke-width: 1;
+}
+
+.radar-radial-line {
+  stroke: #aaa;
+  stroke-width: 1;
+}
+
+.radar-grid-point {
+  fill: #999;
+}
+
+.radar-data-polygon {
+  fill: var(--primary-color);
+  opacity: 0.5;
+}
+
+.radar-label {
+  font-size: 0.8rem;
+  fill: var(--text-color);
+}

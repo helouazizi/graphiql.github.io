@@ -1,14 +1,9 @@
-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  background-color: var(--primary-color);
-  color: #ffffff; /* Ensure text is readable on primary background */
-  font-size: 1rem;
-  font-weight: 500;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2); /* subtle top shadow */
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* optional separator */
-  padding: 0 20px;
+.footer {
+  background-color: var(--card-bg);
+  color: var(--text-color);
   text-align: center;
+  padding: 1rem;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
