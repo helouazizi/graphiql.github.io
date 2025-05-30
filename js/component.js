@@ -152,99 +152,90 @@ export function showMessage(message) {
 
 
 export function createXpGraph(data) {
-  const container = document.createElement('div');
-  container.classList.add('xp-graph-container');
+  const container = document.createElement("div");
+  container.classList.add("xp-graph-container");
 
-  const title = document.createElement('h3');
-  title.textContent = `XP Progression`;
+  const title = document.createElement("h3");
+  title.textContent = "XP Progression";
   container.appendChild(title);
 
   const svgNS = "http://www.w3.org/2000/svg";
-
-  // FIXED WIDTH & HEIGHT
-  const width = 700;
+  const width = 800;
   const height = 300;
-  const margin = { top: 30, right: 30, bottom: 50, left: 50 };
+  const margin = { top: 30, right: 30, bottom: 50, left: 60 };
 
   const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("width", width);
-  svg.setAttribute("height", height);
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   svg.classList.add("xp-graph-svg");
   container.appendChild(svg);
 
   const tooltip = document.createElement("div");
-  tooltip.classList.add("xp-tooltip");
-  tooltip.style.position = "fixed";
-  tooltip.style.pointerEvents = "none";
-  tooltip.style.visibility = "hidden";
-  tooltip.style.background = "#222";
-  tooltip.style.color = "white";
-  tooltip.style.padding = "6px 10px";
-  tooltip.style.borderRadius = "4px";
-  tooltip.style.fontSize = "12px";
-  tooltip.style.zIndex = 9999;
+  tooltip.className = "xp-tooltip";
   document.body.appendChild(tooltip);
 
-  const processedData = data
-    .map(d => ({
-      x: new Date(d.date || d.createdAt),
-      y: d.xp || d.amount,
+  // Step 1: Prepare and sort data
+  const rawData = data
+    .map((d) => ({
+      date: new Date(d.date || d.createdAt),
+      xp: d.xp || d.amount || 0,
       path: d.path || (d.progress && d.progress.path) || "",
-      original: d
+      original: d,
     }))
-    .sort((a, b) => a.x - b.x);
+    .sort((a, b) => a.date - b.date);
 
-  if (processedData.length === 0) {
+  // Step 2: Compute cumulative XP
+  let totalXP = 0;
+  const processedData = rawData.map((d) => {
+    totalXP += d.xp;
+    return {
+      x: d.date,
+      y: totalXP,
+      path: d.path,
+      original: d.original,
+      xpThisStep: d.xp,
+    };
+  });
+
+  if (!processedData.length) {
     container.appendChild(document.createTextNode("No data to display"));
     return container;
   }
 
-  // const xMin = processedData[0].x;
-  // const xMax = processedData[processedData.length - 1].x;
-  const yMax = Math.max(...processedData.map(d => d.y));
+  // X and Y Ranges
+  const xExtent = [processedData[0].x, processedData.at(-1).x];
+  const yMax = processedData.at(-1).y;
 
-  // SCALE Y as before
-  const scaleY = (y) => {
-    return height - margin.bottom - (y / yMax) * (height - margin.top - margin.bottom);
+  // Scales
+  const scaleX = (date) => {
+    const range = xExtent[1] - xExtent[0];
+    return (
+      margin.left +
+      ((date - xExtent[0]) / range) * (width - margin.left - margin.right)
+    );
   };
 
-  // SCALE X: spread points evenly horizontally across width (ignores date differences)
-  const scaleX = (i) => {
-    const usableWidth = width - margin.left - margin.right;
-    const n = processedData.length - 1;
-    if (n === 0) return margin.left + usableWidth / 2;
-    return margin.left + (i / n) * usableWidth;
-  };
+  const scaleY = (y) =>
+    height - margin.bottom - (y / yMax) * (height - margin.top - margin.bottom);
 
   // Axes
-  const xAxis = document.createElementNS(svgNS, "line");
-  xAxis.setAttribute("x1", margin.left);
-  xAxis.setAttribute("y1", height - margin.bottom);
-  xAxis.setAttribute("x2", width - margin.right);
-  xAxis.setAttribute("y2", height - margin.bottom);
-  xAxis.setAttribute("stroke", "#333");
-  svg.appendChild(xAxis);
+  const drawLine = (x1, y1, x2, y2, stroke = "#ccc") => {
+    const line = document.createElementNS(svgNS, "line");
+    line.setAttribute("x1", x1);
+    line.setAttribute("y1", y1);
+    line.setAttribute("x2", x2);
+    line.setAttribute("y2", y2);
+    line.setAttribute("stroke", stroke);
+    svg.appendChild(line);
+  };
 
-  const yAxis = document.createElementNS(svgNS, "line");
-  yAxis.setAttribute("x1", margin.left);
-  yAxis.setAttribute("y1", margin.top);
-  yAxis.setAttribute("x2", margin.left);
-  yAxis.setAttribute("y2", height - margin.bottom);
-  yAxis.setAttribute("stroke", "#333");
-  svg.appendChild(yAxis);
+  drawLine(margin.left, margin.top, margin.left, height - margin.bottom); // Y
+  drawLine(margin.left, height - margin.bottom, width - margin.right, height - margin.bottom); // X
 
+  // Y ticks
   for (let i = 0; i <= 5; i++) {
-    const yVal = (yMax / 5) * i;
-    const yPos = scaleY(yVal);
-
-    const gridLine = document.createElementNS(svgNS, "line");
-    gridLine.setAttribute("x1", margin.left);
-    gridLine.setAttribute("y1", yPos);
-    gridLine.setAttribute("x2", width - margin.right);
-    gridLine.setAttribute("y2", yPos);
-    gridLine.setAttribute("stroke", "#ddd");
-    gridLine.setAttribute("stroke-dasharray", "4 2");
-    svg.appendChild(gridLine);
+    const y = (yMax / 5) * i;
+    const yPos = scaleY(y);
+    drawLine(margin.left, yPos, width - margin.right, yPos, "#eee");
 
     const label = document.createElementNS(svgNS, "text");
     label.setAttribute("x", margin.left - 10);
@@ -252,90 +243,92 @@ export function createXpGraph(data) {
     label.setAttribute("text-anchor", "end");
     label.setAttribute("font-size", "12");
     label.setAttribute("fill", "#666");
-    label.textContent = Math.round(yVal);
+    label.textContent = Math.round(y);
     svg.appendChild(label);
   }
 
-  // X axis labels: evenly spaced indexes with dates
-  const labelStep = Math.ceil(processedData.length / 6);
+  // X labels
+  const labelStep = Math.max(1, Math.floor(processedData.length / 6));
   for (let i = 0; i < processedData.length; i += labelStep) {
-    const xPos = scaleX(i);
+    const xDate = processedData[i].x;
+    const xPos = scaleX(xDate);
     const label = document.createElementNS(svgNS, "text");
     label.setAttribute("x", xPos);
     label.setAttribute("y", height - margin.bottom + 20);
     label.setAttribute("text-anchor", "middle");
     label.setAttribute("font-size", "12");
     label.setAttribute("fill", "#666");
-    label.textContent = processedData[i].x.toLocaleDateString();
+    label.textContent = xDate.toLocaleDateString();
     svg.appendChild(label);
   }
 
-  // Create polyline points string based on index for X
-  const points = processedData
-    .map((p, i) => `${scaleX(i)},${scaleY(p.y)}`)
+  // Path
+  const pathD = processedData
+    .map((point, i, arr) => {
+      const x = scaleX(point.x);
+      const y = scaleY(point.y);
+      if (i === 0) return `M ${x} ${y}`;
+      const prev = arr[i - 1];
+      const prevX = scaleX(prev.x);
+      const prevY = scaleY(prev.y);
+      const cx = (prevX + x) / 2;
+      return `C ${cx} ${prevY}, ${cx} ${y}, ${x} ${y}`;
+    })
     .join(" ");
 
-  const polyline = document.createElementNS(svgNS, "polyline");
-  polyline.setAttribute("points", points);
-  polyline.setAttribute("fill", "none");
-  polyline.setAttribute("stroke", "#4a90e2");
-  polyline.setAttribute("stroke-width", "3");
-  svg.appendChild(polyline);
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute("d", pathD);
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "#4a90e2");
+  path.setAttribute("stroke-width", "3");
+  path.setAttribute("stroke-linecap", "round");
+  path.style.strokeDasharray = "1000";
+  path.style.strokeDashoffset = "1000";
+  path.style.animation = "draw-line 1.2s ease-out forwards";
+  svg.appendChild(path);
 
-  // Circles + tooltip
-  processedData.forEach((point, i) => {
-    const cx = scaleX(i);
+  // Dots + Tooltip
+  processedData.forEach((point) => {
+    const cx = scaleX(point.x);
     const cy = scaleY(point.y);
 
     const circle = document.createElementNS(svgNS, "circle");
     circle.setAttribute("cx", cx);
     circle.setAttribute("cy", cy);
-    circle.setAttribute("r", 6);
+    circle.setAttribute("r", 5);
     circle.setAttribute("fill", "#4a90e2");
     circle.style.cursor = "pointer";
 
     circle.addEventListener("mouseenter", (e) => {
       tooltip.innerHTML = `
-          <div>
-            <strong>Date:</strong> ${point.x.toLocaleDateString()}<br>
-            <strong>XP:</strong> ${point.y} B<br>
-            <strong>Path:</strong><br><pre>${point.path}</pre>
-          </div>
-        `;
-      tooltip.style.visibility = "visible";
-      tooltip.style.opacity = "1";
+        <div class="tooltip-content">
+          <strong>Date:</strong> ${point.x.toLocaleDateString()}<br>
+          <strong>XP Gained:</strong> ${point.xpThisStep} B<br>
+          <strong>Total XP:</strong> ${point.y} B<br>
+          <strong>Path:</strong><br><pre>${point.path}</pre>
+        </div>`;
+      tooltip.classList.add("visible");
+    });
 
-      const offset = 10;
-      let left = e.clientX + offset;
-      let top = e.clientY + offset;
-      if (left + tooltip.offsetWidth > window.innerWidth) {
-        left = e.clientX - tooltip.offsetWidth - offset;
-      }
-      if (top + tooltip.offsetHeight > window.innerHeight) {
-        top = e.clientY - tooltip.offsetHeight - offset;
-      }
-      tooltip.style.left = left + "px";
-      tooltip.style.top = top + "px";
+    circle.addEventListener("mousemove", (e) => {
+      const offset = 12;
+      tooltip.style.left = `${e.clientX + offset}px`;
+      tooltip.style.top = `${e.clientY + offset}px`;
     });
 
     circle.addEventListener("mouseleave", () => {
-      tooltip.style.visibility = "hidden";
-      tooltip.style.opacity = "0";
+      tooltip.classList.remove("visible");
     });
-
 
     svg.appendChild(circle);
   });
 
   container.cleanup = () => {
-    if (tooltip.parentNode) {
-      tooltip.parentNode.removeChild(tooltip);
-    }
+    tooltip.remove();
   };
 
   return container;
 }
-
 
 
 
