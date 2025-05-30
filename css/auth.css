@@ -7,6 +7,9 @@
   padding: 1rem;
 }
 
+.login-header {
+  text-align: center;
+}
 .login-form {
   background-color: #fff;
   padding: 2rem;

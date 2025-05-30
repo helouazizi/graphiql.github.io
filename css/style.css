@@ -8,14 +8,18 @@
 
 
 :root {
-  --primary-color: #007bff; 
-  --bg-color: #3c3c3c;
-  --text-color: #000000;
-  --card-bg: #f8f9fa;
+  --primary-color: #007bff;
+  --bg-color: #1e1e2f;
+  /* Updated darker, cooler background */
+  --text-color: #f0f0f0;
+  /* Softer white text for contrast */
+  --card-bg: #2c2c3e;
+  /* Slightly lighter than background for cards */
   --border-radius: 10px;
   --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
 
 * {
   box-sizing: border-box;
@@ -28,17 +32,20 @@ body {
   color: var(--text-color);
   font-family: var(--font-family);
   line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
+
 
 /* Section container for graphs */
 #shart {
   display: flex;
-  flex-direction: row; 
-  justify-content: center;
-  gap: 20px; 
- 
+  flex-direction: column;
+  /* justify-content: center;
+  gap: 20px;  */
+
   padding: 10px;
-  overflow-x: auto; 
+  overflow-x: auto;
 }
 
 
@@ -60,13 +67,27 @@ body {
 }
 
 @keyframes fadein {
-  from { opacity: 0; top: 0px; }
-  to { opacity: 1; top: 20px; }
+  from {
+    opacity: 0;
+    top: 0px;
+  }
+
+  to {
+    opacity: 1;
+    top: 20px;
+  }
 }
 
 @keyframes fadeout {
-  from { opacity: 1; top: 20px; }
-  to { opacity: 0; top: 0px; }
+  from {
+    opacity: 1;
+    top: 20px;
+  }
+
+  to {
+    opacity: 0;
+    top: 0px;
+  }
 }
 
 
@@ -77,8 +98,3 @@ body {
     align-items: stretch;
   }
 }
-
-
-
-
-

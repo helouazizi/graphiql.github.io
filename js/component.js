@@ -1,30 +1,37 @@
 export function Header() {
-  let header = document.createElement("header");
+  const header = document.createElement("header");
   header.classList.add("header");
 
-  let logo = document.createElement("h1");
-  logo.textContent = "Z01 Profile";
+  // Logo with user icon
+  const logo = document.createElement("div");
   logo.classList.add("logo");
+  logo.innerHTML = `<i class="fas fa-user-circle"></i> <span>Z01 Profile</span>`;
 
-  let nav = document.createElement("nav");
-  let navList = document.createElement("ul");
+  // Navigation
+  const nav = document.createElement("nav");
+  const navList = document.createElement("ul");
 
-  let homeLink = document.createElement("li");
-  homeLink.innerHTML = `<a href="/">Home</a>`;
+  const logoutLink = document.createElement("li");
+  logoutLink.innerHTML = `
+    <a href="#" id="logout">
+      <i class="fas fa-sign-out-alt"></i> Log out
+    </a>`;
 
-  let logoutLink = document.createElement("li");
-  logoutLink.innerHTML = `<a href="#" id="logout">Log out</a>`;
-
-  navList.append(homeLink, logoutLink);
+  navList.appendChild(logoutLink);
   nav.appendChild(navList);
 
   header.append(logo, nav);
-
   return header;
 }
+
 export function logincomponent() {
   let loginDiv = document.createElement("div");
   loginDiv.classList.add("login-container");
+
+  let header = document.createElement("h1");
+  header.id = "login-header";
+  header.classList.add("login-header");
+  header.innerHTML = "Login"
 
   let loginForm = document.createElement("form");
   loginForm.id = "login-form";
@@ -50,7 +57,7 @@ export function logincomponent() {
   submit.classList.add("submit-btn");
   submit.textContent = 'Submit';
 
-  loginForm.append(userWrapper, passwordWrapper, submit);
+  loginForm.append(header, userWrapper, passwordWrapper, submit);
   loginDiv.appendChild(loginForm);
   return loginDiv;
 }

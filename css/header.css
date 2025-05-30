@@ -1,61 +1,56 @@
 
 .header {
+  width: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--text-color);
-  color: var(--primary-color);
   padding: 1rem 2rem;
+  font-family: var(--font-family);
   box-shadow: var(--box-shadow);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 .logo {
+  font-size: 1.6rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo i {
   font-size: 1.8rem;
-  font-weight: bold;
+  color: var(--primary-color);
 }
 
 nav ul {
   list-style: none;
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
+  margin: 0;
+  padding: 0;
 }
 
-nav a {
-  color: white;
+nav ul li a {
   text-decoration: none;
+  color: var(--text-color);
   font-weight: 500;
-}
-
-nav a:hover {
-  text-decoration: underline;
-}
-.header {
+  font-size: 1rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background-color: var(--text-color);
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+nav ul li a i {
+  font-size: 1.1rem;
+}
+
+nav ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
   color: var(--primary-color);
-  padding: 1rem 2rem;
-  box-shadow: var(--box-shadow);
-}
-
-.logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-nav a:hover {
-  text-decoration: underline;
 }
