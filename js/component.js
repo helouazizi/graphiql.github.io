@@ -139,6 +139,8 @@ export function sectiondata(data = {}) {
 
   return section;
 }
+
+
 export function showMessage(message) {
   const popup = document.createElement("div");
   popup.setAttribute("id", "message_popup");
