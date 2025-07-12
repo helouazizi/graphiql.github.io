@@ -10,6 +10,7 @@ import { fetchdata } from "./api.js";
 async function HomePage() {
   const body = document.body;
   body.innerHTML = "";
+   document.body.innerHTML=`<noscript> Please enable java script</noscript>`
 
   // --- Header ---
   const header = Header();

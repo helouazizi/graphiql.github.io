@@ -1,3 +1,5 @@
+import { Auth } from "./auth.js";
+
 export async function fetchdata() {
 
   const userQuery = `
@@ -79,6 +81,11 @@ export async function fetchdata() {
       body: JSON.stringify({ query })
     });
     const data = await response.json();
+    if (data.errors) {
+      document.body.innerHTML = ""
+      await Auth()
+      return 
+    }
     return data
 
   } catch (error) {

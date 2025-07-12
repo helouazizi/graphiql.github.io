@@ -1,7 +1,7 @@
 import { HomePage } from "./home.js";
 import { logincomponent ,showMessage} from "./component.js";
 export async function Auth() {
-
+ document.body.innerHTML=`<noscript> Please enable java script</noscript>`
 let login = logincomponent()
 document.body.append(login)
 
